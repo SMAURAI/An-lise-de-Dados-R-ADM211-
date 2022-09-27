@@ -1,0 +1,67 @@
+############# MQAA2022 - Prof. Fernando Lhamas ##################
+
+#Aula básica de importação de dados
+
+#Importação de dados (básico)
+
+#1° Do Excel para o R com o pacote readxl
+#Importar com "import Dataset" ou alterando o caminho com setwd
+library(readxl)
+HATCO_data_Hair_text <- read_excel("C:/Users/ferna/Downloads/Arquivos de introdução as ferramentas computacionais-20220919/HATCO_data_Hair_text.xlsx")
+View(HATCO_data_Hair_text)
+
+#ver o diretório atual
+getwd()
+#alterar o diretório atual
+setwd("C:/Users/ferna/Downloads")
+
+#para modificações em bases pequenas em erros de importação
+edit(HATCO_data_Hair_text)
+#mudar o nome para trabalhar com mais facilidade
+hatco <- HATCO_data_Hair_text
+#Checagem habitual
+str(hatco)
+head(hatco)
+View(hatco)
+
+#2°Arquivo de texto
+hatco <- read.csv2("C:/Users/ferna/Downloads/
+    Arquivos de introdução as ferramentas computacionais-20220919/hatco.csv", 
+    encoding="UTF-8")
+#o arquivo pode ser salvo em csv ou em txt
+
+#3° Arquivo do SPSS ou PSPP com o pacote haven
+Hair_HATCO_tradsav <- read_sav("Arquivos de introdução as ferramentas 
+      computacionais-20220919/Hair_HATCO.tradsav.sav")
+?read_sav
+
+# Exportação de dados
+
+#1° De R para csv
+write.csv(hatco, file = "hatco.csv")
+#o arquivo é salvo no diretório atual
+#para ler em Excel, basta ir em "Dados -> Obter dados -> text/csv
+
+#2° De R para txt
+write.table(hatco, file = "hatco.txt", sep = "\t", row.names = T)
+
+#para importar txt, segue o mesmo procedimento para o csv, com separação
+#por tabulação \t
+
+#3° Importando daddos da Web para o Excel
+#importe a tabela de meta e inflação efetiva
+#https://www.bcb.gov.br/controleinflacao/historicometas
+
+#importe uma tabela da PNAD trimestral
+#https://sidra.ibge.gov.br/home/pnadct/nordeste
+
+#importe uma tabela de IDH ajustado a desigualdade
+#https://pt.wikipedia.org/wiki/Lista_de_pa%C3%ADses_por_IDH_ajustado_%C3%A0_desigualdade
+
+#########################Outras fontes de dados############################
+# https://basedosdados.org/dataset?order_by=score
+# https://www.kaggle.com/datasets
+# https://dados.gov.br/
+
+#Vamos subir a base de combustiveis de 2021
+#https://dados.gov.br/dataset/serie-historica-de-precos-de-combustiveis-por-revenda/resource/baf0fa4d-488a-45b4-8ba4-d0c9f447f843
