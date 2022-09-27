@@ -1,0 +1,219 @@
+#------------------------------------------------------------------------------#
+#                                                                              #
+#                         Aula básica de gráficos com ggplot2:                 #                                       #
+#                                                                              #
+#                   Concepts of the {ggplot2} Package Part 1                   #
+#                                                                              #
+#                              Professor Fernando Lhamas                       #
+#                                                                              #
+#                                                                              #
+#                                                                              #
+#------------------------------------------------------------------------------#
+
+install.packages("ggplot2")
+library(ggplot2)
+#ggplot é uma gramática de gráficos, implementada para facilitar e expandir as
+#possibilidades de gráficos feitos em R. COm um pequeno conjunto de operações
+#é possível criar uma diversidade de gráficos. Seu idealizador é Hadley Wickham
+#Aqui está o livro dele: https://ggplot2-book.org/index.html
+#Gráfico de barras e pizza para variáveis qualitativas
+#vamos utilizar a base mtcars nativa do R
+?mtcars
+
+pie <- ggplot(mtcars, aes (x = factor(1), fill = factor(cyl)))+
+  geom_bar(width = 1, position = "fill", color = "black")
+pie
+pie + coord_polar(theta = "y")
+
+#Vamos tentar com uma outra base para compreender os argumentos
+#Carregue a base da Hatco
+pie <- ggplot(hatco, aes (x = factor(1), fill = factor(x13)))+
+  geom_bar(width = 1, position = "fill", color = "black")
+pie
+pie + coord_polar(theta = "y")
+#Em tabela de frequências
+table(hatco$x13)
+
+#Portanto, ao indicar factor(1), estamos indicando um eixo de 0 a 1
+#a variável de preenchimento das barras é a x13, a var. que queremos estudar
+#coord_polar muda a forma de barra para o gráfico de pizza
+#mas será que tem outras formas? Qual é a forma padrão?
+?coord_polar
+#Encontramos outras formas nos exemplos, vamos rodar:
+cxc <- ggplot(mtcars, aes(x = factor(cyl))) +
+  geom_bar(width = 1, colour = "black")
+cxc + coord_polar()
+pie + coord_polar()
+df <- data.frame(
+  variable = c("não se assemelha", "semelhante"),
+  value = c(20, 80)
+)
+ggplot(df, aes(x = "", y = value, fill = variable)) +
+  geom_col(width = 1) +
+  scale_fill_manual(values = c("red", "yellow")) +
+  coord_polar("y", start = pi / 3) +
+  labs(title = "Pac man")
+
+#voltando para o início
+#Já deu pra ver que o menu ajuda é bem útil e permite aprender novas formas
+#de representar as variáveis
+#Mas vamos pensar nos elementos do gráfico, no padrão, para que você ao aprender
+#1, tenha cada vez mais facilidade em aprender novos
+
+#Propriedades do gráfico - aesthetics ou estética
+# posição do x
+# posição do y
+# tamanho dos elementos
+# shape dos elementos
+# cor dos elementos
+# preenchimento dos elementos
+
+#Propriedade do gráfico - geometries ou geometria
+# points
+# lines
+# lines segments
+# bars
+# text
+# Todas as opções possíveis no ggplot2
+ls(pattern = '^geom_', env = as.environment('package:ggplot2'))
+#Também é possível adicionar estatísticas ao gráfico
+
+#Normalmente, utilizamos o dplyr para manipular os dados e em seguida
+#o ggplot2 para explorar seus resultados
+
+########### NÃo esqueça o básico ####################
+#                ggplot(data, aes(..))
+p <- ggplot(hatco, aes(x = x9, y = x4))
+#vamos ver o que criamos até agora
+plot(p)
+#Definimos os eixos, utilizandoa s escalas originais das variáveis
+p <- p + geom_point()
+p
+#vamos adicionar a estética shape
+p <- p + geom_point(shape = 3)
+p
+#Quantos shapes podemos pensar em colocar?
+?shape
+#R = De 0 a 25
+#Agora vamos adicionar cores e tamanho maior
+ggplot(hatco, aes(x = x9, y = x4))+
+  geom_point(color = "red", size = 3, shape = 1)
+
+# Podemos adicionar uma linha de tendência ao gráfico
+p <- ggplot(hatco, aes(x = x9, y = x4))+
+  geom_point(color = "red", size = 2)
+p <- p + stat_smooth()
+p
+
+#############################################################################
+                              Desafio
+#############################################################################
+# Retire os pontos do gráfico, mantendo a linha de tendência.
+# Adicione os nomes das variáveis
+# Inclua qualquer tema
+
+
+
+
+
+#Vamos aproveitar o mesmo gráfico e adicionar os pontos
+ggplot(hatco, aes(x = x9, y = x4))+
+  geom_point(color = "red", size = 2)+
+  stat_smooth()+
+  ylab("Imagem da manufatura")+
+  xlab("Satisfação")+
+  theme_bw()
+
+#eja os elementos de estética mais utilizados
+#fill = muda a cor dos elementos do gráfico
+#size = altera o tamanho de diversos elementos
+#shape = altera a forma de diversos elementos
+#alpha = define opacidade de elementos
+#color = muda a cor dos elementos
+
+#Vamos testar o elemento de cor por uma variável qualitativa
+ggplot(hatco, aes(x9,x4,color=x8))+
+  geom_point()
+#Deu erro. Quando estamos utilizando uma váriavel quali, devemos indicar
+#o uso dos números ao invés dos nomes das categorias
+#para isso, utilizamos as.factor
+ggplot(hatco, aes(x9,x4,color=as.factor(x14)))+
+  geom_point()
+#Vamos adicionar linhas ao gráfico
+ggplot(hatco, aes(x9,x4,color=as.factor(x14)))+
+  geom_point()+
+  geom_line()
+#Temos outro que se chama geom_path, vamos entender a diferença?
+ggplot(hatco, aes(x9,x4,color=as.factor(x14)))+
+  geom_point()+
+  geom_path()
+#line junta os pontos de acordo com o eixo x
+#path junta os pontos pela ordem do banco de dados
+
+#Vamos adicionar o smooth novamente, mas sem a área de erro
+ggplot(hatco, aes(x9,x4,color=as.factor(x14)))+
+  geom_point()+
+  geom_smooth(se = F)
+#se = standard error = falso
+#vamos fazer apenas o de linhas
+ggplot(hatco, aes(x9,x4,color=as.factor(x14)))+
+  geom_line()
+#Ou talvez um histograma
+ggplot(hatco, aes(x9))+
+  geom_histogram()
+#Ou talvez categorias em texto
+ggplot(hatco, aes(x = x9, y = x4))+
+  geom_text(aes(label = as.factor(x14)))
+#Vamos fazer também um box-plot
+ggplot(hatco, aes(as.factor(x14),x9))+
+  geom_boxplot()
+#Podemos utilizar a mesma estética do boxplot, mas com pontos
+ggplot(hatco, aes(as.factor(x14),x9))+
+  geom_point(position="jitter")
+# Alteramos aqui a posição dos pontos com jitter
+# se ajusta melhor aos pontos
+# identity: o padrão na maioria dos casos, definido por x e y
+# jitter: usado para pontos baseado na dispersão de x ou y
+# stack: a posição padrão para barras
+# dodge: deixas as barras lado a lado
+# fill: deixa um por cima do outro. também é útil para escalas de 0 a 1
+
+#Simplificando o gráfio anterior
+ggplot(hatco, aes(as.factor(x14),x9))+
+  geom_jitter()
+
+#Utilizando as demais posições
+ggplot(hatco, aes(as.factor(x14)))+
+  geom_bar()
+#utilizando fill e cor nas barras
+ggplot(hatco, aes(as.factor(x14), fill = as.factor(x8)))+
+  geom_bar(color = "black")
+#utilizando dodge
+ggplot(hatco, aes(as.factor(x14), fill = as.factor(x8)))+
+  geom_bar(position = "dodge", color = "black")
+#utilizando fill
+ggplot(hatco, aes(as.factor(x14), fill = as.factor(x8)))+
+  geom_bar(position = "fill", color = "black")
+#Uma boa alternativa para barras empilhadas, é a geometria de densidade
+ggplot(hatco, aes(as.factor(x14), fill = as.factor(x8)))+
+  geom_density(alpha = 0.6)
+#Com fill
+ggplot(hatco, aes(as.factor(x14), fill = as.factor(x8)))+
+  geom_density(position = "fill")
+# Vejamos um gráfico que pode ser alternativa para o boxplot
+ggplot(hatco, aes(as.factor(x14), x9))+
+  geom_violin()+
+  geom_dotplot(binaxis ="y", stackdir = "center")
+
+# Vamos explorar de forma contextualizada a utilização dos gráficos
+#adicionando também as estatísticas na construção dos gráficos
+apropos("^stat_")
+# Uma estatística importante para finalizar
+ggplot(hatco, aes(x9, x4))+
+  geom_point(color = "red", size = 2)+
+  geom_smooth(method = lm)
+#dispersão ajustada com a reta de regressão
+#Um gráfico como esse ajuda a reportar um estudo de regressão
+cor(hatco$x9,hatco$x4)
+reg <- lm(x9 ~ x4, hatco)
+summary(reg)
